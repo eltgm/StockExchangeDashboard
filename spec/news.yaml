@@ -1,0 +1,82 @@
+swagger: '2.0'
+info:
+  description: |
+    REST API биржи
+  version: '1'
+  title: Бэкенд биржи.
+host: '127.0.0.1:8080'
+basePath: /api/v1
+tags:
+  - name: News
+    description: Операции работы с новостями
+
+securityDefinitions:
+  basicAuth:
+    type: basic
+
+security:
+  - basicAuth: [ ]
+
+paths:
+  /news:
+    get:
+      tags:
+        - News
+      operationId: getNews
+      summary: Подгружаем все доступные новости
+      description: >
+        Получаем все доступные новости для всех компаний
+      parameters:
+        - in: query
+          name: page
+          required: false
+          type: integer
+          default: 0
+          description: Запрашиваемая страница данных
+        - in: query
+          name: pageSize
+          required: false
+          type: integer
+          default: 10
+          description: Запрашиваемый размер страницы данных
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/News'
+
+definitions:
+  News:
+    type: object
+    properties:
+      news:
+        type: array
+        items:
+          $ref: '#/definitions/OneNews'
+      totalElements:
+        type: integer
+        format: int64
+        minimum: 0
+      totalPages:
+        type: integer
+        minimum: 0
+    description: |
+      Массив новостей
+
+  OneNews:
+    type: object
+    properties:
+      title:
+        type: string
+        description: Заголовок новости
+      summary:
+        type: string
+        description: Текст новости
+      url:
+        type: string
+        description: Ссылка на всю новость
+      source:
+        type: string
+        description: Источник новости
+    description: |
+      Новость

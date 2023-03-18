@@ -1,0 +1,131 @@
+swagger: '2.0'
+info:
+  description: |
+    REST API биржи
+  version: '1'
+  title: Бэкенд биржи.
+host: '127.0.0.1:8080'
+basePath: /api/v1
+tags:
+  - name: User
+    description: Операции работы с пользователями
+
+securityDefinitions:
+  basicAuth:
+    type: basic
+
+security:
+  - basicAuth: [ ]
+
+paths:
+  /user:
+    get:
+      tags:
+        - User
+      operationId: getUserInfo
+      summary: Получаем информацию о пользователе
+      description: >
+        Получаем актуальную информацию о авторизованном пользователе
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/User'
+
+  /user/{userId}/stock/add:
+    post:
+      tags:
+        - User
+      operationId: addStockToFavorite
+      summary: Добавляем акцию в избранные
+      description: >
+        Добавляем акцию в таблицу (если нет) и создаем связь с пользователем
+      parameters:
+        - name: userId
+          in: path
+          description: Идентификатор пользователя, которому будем добавлять акцию
+          required: true
+          type: string
+          format: uuid
+        - name: stock
+          in: body
+          description: Идентификатор акции, которую будем добавлять пользователю
+          required: true
+          schema:
+            type: object
+            $ref: '#/definitions/Stock'
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/Stock'
+
+  /user/{userId}/stock/{stockId}/remove:
+    delete:
+      tags:
+        - User
+      operationId: removeStockFromFavorite
+      summary: Удаляем акцию из избранных
+      description: >
+        Удаляем связь акции с пользователем
+      parameters:
+        - name: userId
+          in: path
+          description: Идентификатор пользователя, у которого будем удалять связь с акцией
+          required: true
+          type: string
+          format: uuid
+        - name: stockId
+          in: path
+          description: Идентификатор акции, у которой будем удалять связь с пользователем
+          required: true
+          type: string
+          format: uuid
+      responses:
+        200:
+          description: OK
+
+definitions:
+  User:
+    type: object
+    properties:
+      id:
+        type: string
+        format: uuid
+        description: ID пользователя
+      name:
+        type: string
+        description: Логин пользователя
+      stocks:
+        type: array
+        description: Избранные акции пользователя
+        items:
+          $ref: '#/definitions/Stock'
+    description: |
+      Пользователь
+
+  Stock:
+    type: object
+    properties:
+      id:
+        type: string
+        format: uuid
+        description: ID акции
+      name:
+        type: string
+        description: Название акции
+      ticker:
+        type: string
+        description: Короткое название акции
+      currency:
+        type: string
+        description: Валюта акции
+      logo:
+        type: string
+        description: Лого компании акции
+      currentPrice:
+        type: number
+        description: Текущая стоимость акции
+      change:
+        type: number
+        description: Изменение акции с начала торгов

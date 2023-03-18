@@ -1,0 +1,34 @@
+version: '3.1'
+services:
+  backend:
+    container_name: backend
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    privileged: true
+    ports:
+      - 8080:8080
+    depends_on:
+      - migrations
+
+  postgresql:
+    container_name: stock-postgresql
+    image: postgres
+    environment:
+      POSTGRES_PASSWORD: 12345678
+      POSTGRES_USER: stock-db
+      APP_SCHEMA: stock-db
+      DEFAULT_SCHEMA: public
+      DB_HOST: postgresql
+      POSTGRES_DB: stock-db
+    ports:
+      - "8432:5432"
+
+  migrations:
+    image: liquibase/liquibase
+    command: --url=jdbc:postgresql://postgresql:5432/stock-db --username=stock-db --password=12345678 --changelog-file=changelog.xml update
+    depends_on:
+      - postgresql
+    volumes:
+      - ./src/main/java/ru/sultanyarov/stockexchangedashboard/database/changelog.xml:/liquibase/changelog.xml
+      - ./src/main/java/ru/sultanyarov/stockexchangedashboard/database/sql:/liquibase/sql

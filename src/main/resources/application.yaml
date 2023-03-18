@@ -1,0 +1,28 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:8432/stock-db
+    username: stock-db
+    password: 12345678
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQL10Dialect
+
+# Параметры для взаимодействия с сервисом finhub
+finhub:
+  # Адрес сервиса
+  host: https://finnhub.io/api/v1/
+  # API ключ от сервиса finhub
+  apiKey: cgb0lhpr01ql0m8rh580cgb0lhpr01ql0m8rh58g
+
+# Крон-выражения для обновления данных в базах
+delay:
+  # Интервал обновления общих новостей (в миллисекундах, также можно использовать формат java.time.Duration)
+  news: 1h
+  # Интервал обновления списка акций (в миллисекундах, также можно использовать формат java.time.Duration)
+  stock: 7d
+
+logging:
+  level:
+    ru.sultanyarov.stockexchangedashboard.service.ContentUpdaterService: INFO
+    ru.sultanyarov.stockexchangedashboard.service: DEBUG

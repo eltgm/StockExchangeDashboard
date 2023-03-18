@@ -1,0 +1,20 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="v1" author="vsultanyarov" context="v1">
+        <sqlFile dbms="postgresql" path="sql/db_settings.sql" splitStatements="true" endDelimiter="$$"
+                 stripComments="false"
+                 relativeToChangelogFile="true"/>
+        <sqlFile dbms="postgresql" path="sql/stock.sql" splitStatements="true" endDelimiter="$$" stripComments="false"
+                 relativeToChangelogFile="true"/>
+        <sqlFile dbms="postgresql" path="sql/users.sql" splitStatements="true" endDelimiter="$$" stripComments="false"
+                 relativeToChangelogFile="true"/>
+        <sqlFile dbms="postgresql" path="sql/user_stock.sql" splitStatements="true" endDelimiter="$$"
+                 stripComments="false"
+                 relativeToChangelogFile="true"/>
+        <sqlFile dbms="postgresql" path="sql/news.sql" splitStatements="true" endDelimiter="$$" stripComments="false"
+                 relativeToChangelogFile="true"/>
+    </changeSet>
+</databaseChangeLog>

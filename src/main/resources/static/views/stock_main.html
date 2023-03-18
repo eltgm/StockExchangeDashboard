@@ -1,0 +1,110 @@
+<div ng-init="init()">
+    <div>
+        <div class="row">
+            <div class="col d-flex justify-content-start">
+                <span class="fw-bold fs-2 lh-1">{{stock.data.profile.ticker}}</span>
+                <span class="fs-5 text-reset px-5 text-danger">{{stock.data.profile.name}}</span>
+            </div>
+            <div class="col d-flex justify-content-end">
+                <span class="fs-5 text-reset">{{stock.data.quote.currentPrice | number: 2}}</span>
+                <span class="fs-5 text-reset px-5"
+                      ng-class="{true: 'bg-success', false: 'bg-danger'}[stock.data.quote.percentChange > 0]">{{stock.data.quote.percentChange | number: 2}} %</span>
+                <button type="button" class="btn btn-info" ng-click="changeStockStatus(user, stock.data.profile)">
+                    Like/Dislike
+                </button>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <span class="fs-5 lh-1">{{stock.data.profile.exchange}}</span>
+                <span class="fs-5 text-reset px-3">{{stock.data.profile.currency}}</span>
+            </div>
+        </div>
+        <hr class="hr hr-blurry"/>
+    </div>
+    <div id="chart"></div>
+    <div>
+        <table class="table text-white">
+            <tbody>
+            <tr>
+                <td>
+                    <div class="d-flex justify-content-between">
+                        <span>Открытие </span>
+                        <div class="d-flex justify-content-end">{{stock.data.quote.openPriceOfTheDay | number: 1}}</div>
+                    </div>
+                </td>
+                <td>
+                    <div class="d-flex justify-content-between">
+                        <span>Оборачиваемость активов </span>
+                        <div class="d-flex justify-content-end">{{stock.data.basicFinancials.assetTurnoverAnnual |
+                            number: 2}}%
+                        </div>
+                    </div>
+                </td>
+                <td>
+                    <div class="d-flex justify-content-between">
+                        <span>52-нед макс </span>
+                        <div class="d-flex justify-content-end">{{stock.data.basicFinancials.high52Week | number: 2}}
+                        </div>
+                    </div>
+                </td>
+                <td>
+                    <div class="d-flex justify-content-between">
+                        <span>Текущая ликвидность </span>
+                        <div class="d-flex justify-content-end">{{stock.data.basicFinancials.currentRatioQuarterly |
+                            number: 2}}%
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div class="d-flex justify-content-between">
+                        <span>Максимум </span>
+                        <div class="d-flex justify-content-end">{{stock.data.quote.highPriceOfTheDay | number: 1}}</div>
+                    </div>
+                </td>
+                <td>
+                    <div class="d-flex justify-content-between">
+                        <span>Годовой темп роста балансовой стоимости </span>
+                        <div class="d-flex justify-content-end">{{stock.data.basicFinancials.bookValueShareGrowth5Y |
+                            number: 2}}%
+                        </div>
+                    </div>
+                </td>
+                <td>
+                    <div class="d-flex justify-content-between">
+                        <span>52-нед мин </span>
+                        <div class="d-flex justify-content-end">{{stock.data.basicFinancials.low52Week | number: 2}}
+                        </div>
+                    </div>
+                </td>
+                <td>
+                    <div class="d-flex justify-content-between">
+                        <span>Чистая рентабельность </span>
+                        <div class="d-flex justify-content-end">{{stock.data.basicFinancials.netProfitMargin5Y | number:
+                            2}}%
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div class="d-flex justify-content-between">
+                        <span>Минимум </span>
+                        <div class="d-flex justify-content-end">{{stock.data.quote.lowPriceOfTheDay | number: 1}}</div>
+                    </div>
+                </td>
+                <td>
+                    <div class="d-flex justify-content-between">
+                        <span>Среднедневной объем торгов </span>
+                        <div class="d-flex justify-content-end">
+                            {{stock.data.basicFinancials.averageTradingVolume10Day | number: 2}}
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

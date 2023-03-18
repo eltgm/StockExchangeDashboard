@@ -1,0 +1,200 @@
+swagger: '2.0'
+info:
+  description: |
+    REST API биржи
+  version: '1'
+  title: Бэкенд биржи.
+host: '127.0.0.1:8080'
+basePath: /api/v1
+tags:
+  - name: Stocks
+    description: Операции работы с акциями
+  - name: Stock
+    description: Операции с одной конкретной акцией
+
+securityDefinitions:
+  basicAuth:
+    type: basic
+
+security:
+  - basicAuth: [ ]
+
+paths:
+  /stocks/{stockId}:
+    get:
+      tags:
+        - Stock
+      operationId: getStock
+      summary: Подгружаем информацию по конкретной акции
+      description: >
+        Получаем всю информацию и новости по акции
+      parameters:
+        - name: stockId
+          in: path
+          description: Идентификатор акции
+          required: true
+          type: string
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/Stock'
+
+  /stocks:
+    get:
+      tags:
+        - Stock
+      operationId: searchStock
+      summary: Осуществляем поиск акции
+      description: >
+        Осуществляем поиск доступной акции по части описания
+      parameters:
+        - in: query
+          name: q
+          type: string
+          description: Часть строки для поиска акции
+      responses:
+        200:
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/StockLightweight'
+
+definitions:
+  Stocks:
+    type: array
+    items:
+      $ref: '#/definitions/Stock'
+    description: |
+      Массив акций
+
+  Stock:
+    type: object
+    properties:
+      profile:
+        type: object
+        $ref: '#/definitions/CompanyProfile'
+        description: Профиль компании
+      quote:
+        type: object
+        $ref: '#/definitions/Quote'
+        description: Котировки компании
+      basicFinancials:
+        type: object
+        $ref: '#/definitions/BasicFinancials'
+        description: Основные финансовые показатели компании
+      candles:
+        type: object
+        $ref: '#/definitions/Candles'
+        description: Свечи акции
+    description: |
+      Акция
+
+  Candles:
+    type: object
+    properties:
+      day:
+        type: object
+        $ref: '#/definitions/Candle'
+        description: Свеча за прошлый день
+      week:
+        type: array
+        items:
+          $ref: '#/definitions/Candle'
+        description: Свечи за прошлую неделю
+      month:
+        type: array
+        items:
+          $ref: '#/definitions/Candle'
+        description: Свечи за прошлый месяц
+
+  Candle:
+    type: object
+    properties:
+      high:
+        type: number
+        description: Самая высокая цена
+      low:
+        type: number
+        description: Самая низкая цена
+      open:
+        type: number
+        description: Цена открытия
+      close:
+        type: number
+        description: Цена закрытия
+      date:
+        type: string
+        format: date
+        description: День свечи
+
+  CompanyProfile:
+    type: object
+    properties:
+      name:
+        type: string
+        description: Описание акции
+      ticker:
+        type: string
+        description: Отображаемый код акции
+      currency:
+        type: string
+        description: Валюта, используемая в документах компании
+      exchange:
+        type: string
+        description: Биржа
+      logo:
+        type: string
+        description: Логотип акции
+
+  Quote:
+    type: object
+    properties:
+      currentPrice:
+        type: number
+        description: Цена, по которой акция продается на рынке
+      percentChange:
+        type: number
+        description: Изменение цены (в процентах) акции с момента открытия торгов
+      highPriceOfTheDay:
+        type: number
+        description: Самая высокая цена акции с открытия торгов
+      lowPriceOfTheDay:
+        type: number
+        description: Самая низкая цена акции с открытия торгов
+      openPriceOfTheDay:
+        type: number
+        description: Цена акции на момент открытия торгов
+
+  BasicFinancials:
+    type: object
+    properties:
+      high52Week:
+        type: number
+        description: Самая высокая цена акции за 52 недели
+      low52Week:
+        type: number
+        description: Самая низкая цена акции за 52 недели
+      assetTurnoverAnnual:
+        type: number
+        description: Коэффициент оборачиваемости активов. Соотносит выручку компании со стоимостью ее активов
+      currentRatioQuarterly:
+        type: number
+        description: Коэффициент текущей (общей) ликвидности. Является мерой платежеспособности организации, способности погашать текущие (до года) обязательства организации
+      bookValueShareGrowth5Y:
+        type: number
+        description: Совокупный годовой темп роста балансовой стоимости на акции. Показывает, насколько быстро компания увеличивает свою балансовую стоимость на акцию. Он измеряется как процентное изменение балансовой стоимости одной акции за определенный период времени. Это измеряется как совокупный годовой темп роста (CAGR) за последние 5 лет.
+      netProfitMargin5Y:
+        type: number
+        description: Чистая рентабельность бизнеса. Рассчитывается как отношение чистой прибыли к выручке.
+      averageTradingVolume10Day:
+        type: number
+        description: Среднедневной объем торгов. Среднее количество акций, проданных в течение дня по данной акции.
+
+  StockLightweight:
+    type: object
+    properties:
+      symbolAndDescription:
+        type: string
+        description: Короткое название и описание акции

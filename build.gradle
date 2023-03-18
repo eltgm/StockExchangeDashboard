@@ -1,0 +1,124 @@
+buildscript {
+    ext {
+        apiModules = [
+                "stockApi",
+                "newsApi",
+                "userApi"
+        ]
+    }
+    dependencies {
+        classpath 'org.hidetake.swagger.generator:org.hidetake.swagger.generator.gradle.plugin:2.18.2'
+    }
+}
+
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '2.7.7-SNAPSHOT'
+    id 'io.spring.dependency-management' version '1.0.15.RELEASE'
+}
+
+apply plugin: 'org.hidetake.swagger.generator'
+
+group = 'ru.sultanyarov'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '11'
+
+configurations {
+    swaggerCodegenV2
+}
+
+repositories {
+    mavenCentral()
+    maven { url 'https://repo.spring.io/milestone' }
+    maven { url 'https://repo.spring.io/snapshot' }
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
+    annotationProcessor 'org.projectlombok:lombok'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.security:spring-security-test'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    implementation 'org.postgresql:postgresql'
+
+    //Swagger Codegen
+    swaggerCodegenV2 'io.swagger:swagger-codegen-cli:2.4.9'
+    implementation 'io.swagger:swagger-annotations:1.5.20'
+    implementation 'io.swagger:swagger-core:1.5.20'
+
+    //Mapping support
+    implementation 'org.mapstruct:mapstruct:1.4.2.Final'
+    annotationProcessor 'org.mapstruct:mapstruct-processor:1.4.2.Final'
+}
+
+swaggerSources {
+    stockApi {
+        inputFile = file('spec/stock.yaml')
+        code {
+            language = 'spring'
+            configuration = configurations.swaggerCodegenV2
+            components = [models: true, apis: true]
+            additionalProperties = ['modelPackage' : 'ru.sultanyarov.stockexchangedashboard.stock.dto',
+                                    'apiPackage'   : 'ru.sultanyarov.stockexchangedashboard.stock',
+                                    'interfaceOnly': 'true',
+                                    'dateLibrary'  : 'java8']
+            // Validate YAML before code generation
+            dependsOn validation
+        }
+    }
+
+    newsApi {
+        inputFile = file('spec/news.yaml')
+        code {
+            language = 'spring'
+            configuration = configurations.swaggerCodegenV2
+            components = [models: true, apis: true]
+            additionalProperties = ['modelPackage' : 'ru.sultanyarov.stockexchangedashboard.news.dto',
+                                    'apiPackage'   : 'ru.sultanyarov.stockexchangedashboard.news',
+                                    'interfaceOnly': 'true',
+                                    'dateLibrary'  : 'java8']
+            // Validate YAML before code generation
+            dependsOn validation
+        }
+    }
+
+    userApi {
+        inputFile = file('spec/user.yaml')
+        code {
+            language = 'spring'
+            configuration = configurations.swaggerCodegenV2
+            components = [models: true, apis: true]
+            additionalProperties = ['modelPackage' : 'ru.sultanyarov.stockexchangedashboard.user.dto',
+                                    'apiPackage'   : 'ru.sultanyarov.stockexchangedashboard.user',
+                                    'interfaceOnly': 'true',
+                                    'dateLibrary'  : 'java8']
+            // Validate YAML before code generation
+            dependsOn validation
+        }
+    }
+}
+
+sourceSets.main.java.srcDirs "$buildDir/generated/src/main/java"
+sourceSets.test.java.srcDirs "$buildDir/generated/src/main/java"
+sourceSets.main.java.srcDirs apiModules.collect { "${swaggerSources."$it".code.outputDir}/src/main/java" }
+sourceSets.main.resources.srcDirs apiModules.collect { "${swaggerSources."$it".code.outputDir}/src/main/resources" }
+sourceSets.main.output.resourcesDir = compileJava.destinationDir
+
+processResources {
+    from('spec') { into 'api-spec' }
+}
+
+bootJar {
+    archiveFileName = 'stock-server.jar'
+    archiveExtension = '.jar'
+}
+
+compileJava {
+    options.compilerArgs << '-Amapstruct.defaultComponentModel=spring'
+    dependsOn processResources
+    dependsOn apiModules.collect { swaggerSources."$it".code }
+}

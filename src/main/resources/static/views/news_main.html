@@ -1,0 +1,31 @@
+<div ng-init="init()">
+    <div>
+        <p class="fw-bold fs-2 lh-1">Stocks</p>
+        <p class="fs-3 text-reset">{{currentDate | date:'longDate'}}</p>
+        <hr class="hr hr-blurry"/>
+    </div>
+    <div>
+        <div ng-repeat="news in news.data.news">
+            <div>
+                <div style="display: flex; justify-content: space-between;">
+                    <p class="fw-bold fs-4 lh-1">{{news.title}}</p></b>
+                    <p class="fs-4 text-reset">{{news.source}}</p>
+                </div>
+                <div>
+                    {{news.summary}}
+                </div>
+                </b>
+                <a href="{{news.url}}" class="link-secondary">Read more...</a>
+            </div>
+            <hr class="hr hr-blurry"/>
+        </div>
+    </div>
+    <nav aria-label="page">
+        <ul class="pagination" ng-init="currentPage = 0">
+            <li class="page-item" ng-click="loadNews(currentPage - 1)"><a class="page-link">Previous</a></li>
+            <li class="page-item"><a class="page-link">{{currentPage+1}}</a></li>
+            <li class="page-item" ng-click="loadNews(currentPage + 1)"><a class="page-link">Next</a>
+            </li>
+        </ul>
+    </nav>
+</div>
