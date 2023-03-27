@@ -19,6 +19,7 @@ import ru.sultanyarov.stockexchangedashboard.repository.StockRepository;
 import ru.sultanyarov.stockexchangedashboard.repository.UserRepository;
 import ru.sultanyarov.stockexchangedashboard.repository.UserStockRepository;
 
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.springframework.util.StringUtils.hasText;
@@ -49,11 +50,11 @@ public class UserService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return userRepository.findByUserLogin(username);
+        return userRepository.findByUserLogin(username).orElseThrow(() -> new UsernameNotFoundException("User with name " + username + " not found"));
     }
 
     public User loadUserFullInfoByUsername(String username) {
-        User user = userRepository.findByUserLogin(username);
+        User user = userRepository.findByUserLogin(username).orElseThrow(() -> new UsernameNotFoundException("User with name " + username + " not found"));
         for (StockDto stock : user.getStocks()) {
             Quote quote = finhubService.loadQuoteByStockSymbol(stock.getTicker());
             stock.setCurrentPrice(quote.getCurrentPrice());
@@ -90,13 +91,12 @@ public class UserService implements UserDetailsService {
     }
 
     public void registrationUser(String username, String password) {
-        User user = userRepository.findByUserLogin(username);
-        if (user != null) {
+        Optional<User> user = userRepository.findByUserLogin(username);
+        if (user.isPresent()) {
             throw new RuntimeException("User already existed!");
         }
 
         userRepository.save(new User(username, passwordEncoder.encode(password)));
-
         addUserInSecurityContext(username, password);
     }
 

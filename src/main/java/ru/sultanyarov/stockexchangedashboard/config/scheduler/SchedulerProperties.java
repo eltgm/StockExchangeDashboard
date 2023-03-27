@@ -19,10 +19,4 @@ public class SchedulerProperties {
      */
     @DurationUnit(MILLIS)
     private Duration news;
-
-    /**
-     * Интервал обновления списка акций (в миллисекундах, также можно использовать формат java.time.Duration)
-     */
-    @DurationUnit(MILLIS)
-    private Duration stock;
 }

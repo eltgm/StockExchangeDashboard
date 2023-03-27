@@ -106,6 +106,8 @@ definitions:
 
   Stock:
     type: object
+    required:
+      - ticker
     properties:
       id:
         type: string

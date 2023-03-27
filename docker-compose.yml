@@ -30,5 +30,5 @@ services:
     depends_on:
       - postgresql
     volumes:
-      - ./src/main/java/ru/sultanyarov/stockexchangedashboard/database/changelog.xml:/liquibase/changelog.xml
-      - ./src/main/java/ru/sultanyarov/stockexchangedashboard/database/sql:/liquibase/sql
+      - ./src/main/resources/db/changelog.xml:/liquibase/changelog.xml
+      - ./src/main/resources/db/sql:/liquibase/sql

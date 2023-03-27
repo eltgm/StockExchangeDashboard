@@ -32,10 +32,10 @@ public class UserController implements UserApi {
 
     @Override
     public ResponseEntity<User> getUserInfo() {
-        String username = ((ru.sultanyarov.stockexchangedashboard.domain.User) (SecurityContextHolder.getContext()
-                .getAuthentication()
-                .getPrincipal()))
-                .getUsername();
+        String username = ((ru.sultanyarov.stockexchangedashboard.domain.User)
+                (SecurityContextHolder.getContext()
+                        .getAuthentication()
+                        .getPrincipal())).getUsername();
         return ok(userMapper.domainUserToDto(userService.loadUserFullInfoByUsername(username)));
     }
 
